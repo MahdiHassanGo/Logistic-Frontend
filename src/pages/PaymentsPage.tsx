@@ -1,0 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
+import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Badge, EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui';
+import { apiError } from '../services/api';
+import { paymentsApi } from '../services/endpoints';
+import { dateBn, money } from '../utils/format';
+export function PaymentsPage(){const q=useQuery({queryKey:['payments'],queryFn:()=>paymentsApi.list({page:1,limit:100})});if(q.isLoading)return <Loading/>;if(q.error)return <ErrorBox message={apiError(q.error)}/>;return <><PageHeader title="পেমেন্ট" description="কালেকশন, invoice allocation এবং receipt" actions={<Link to="/app/payments/new" className="lk-btn-primary"><Plus size={17}/>পেমেন্ট গ্রহণ</Link>}/>{!q.data?.data.length?<div className="lk-card"><EmptyState/></div>:<div className="lk-table-wrap"><table className="lk-table"><thead><tr><th>রিসিট</th><th>তারিখ</th><th>গ্রাহক</th><th>পরিমাণ</th><th>মেথড</th><th>ইনভয়েস</th><th>স্ট্যাটাস</th><th></th></tr></thead><tbody>{q.data.data.map(p=><tr key={p.id}><td className="font-mono text-xs font-bold text-blue-700">{p.receiptNumber}</td><td>{dateBn(p.paymentDate)}</td><td>{p.customer.name}</td><td className="font-bold text-green-700">{money(p.amount)}</td><td>{p.method}</td><td>{p.allocations?.map(a=>a.invoice?.invoiceNumber).filter(Boolean).join(', ')||'Auto allocation'}</td><td><Badge tone={p.status==='CONFIRMED'?'green':'red'}>{p.status}</Badge></td><td><Link to={`/app/payments/${p.id}`} className="font-bold text-blue-600">দেখুন</Link></td></tr>)}</tbody></table></div>}</>}

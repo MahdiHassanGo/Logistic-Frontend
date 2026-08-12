@@ -1,0 +1,2 @@
+import { Truck } from 'lucide-react';
+export function Brand({inverse=false}:{inverse?:boolean}){return <div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-[14px] bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-600/25"><Truck size={24}/></div><div><div className={`text-lg font-bold ${inverse?'text-white':'text-slate-950'}`}>LogiKhata</div><div className={`text-[11px] ${inverse?'text-white/55':'text-slate-500'}`}>লজিস্টিকস ম্যানেজমেন্ট সিস্টেম</div></div></div>}
