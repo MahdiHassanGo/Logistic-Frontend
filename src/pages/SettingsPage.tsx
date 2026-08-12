@@ -1,17 +1,30 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Database, Moon, Save, ShieldCheck, Sun } from 'lucide-react';
+import { Database, MessageSquareText, Moon, Save, ShieldCheck, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Field, PageHeader } from '../components/ui';
-import { settingsApi } from '../services/endpoints';
+import { settingsApi, smsApi } from '../services/endpoints';
 import { useUIStore } from '../stores/ui';
 
 export function SettingsPage() {
   const ui = useUIStore();
   const [company, setCompany] = useState({ name: 'LogiKhata', phone: '', address: '', code: 'SHOP-001' });
 
+  const [smsSettings, setSmsSettings] = useState({
+    provider: 'MOCK',
+    apiKey: '',
+    senderId: 'LOGIKHATA',
+    autoSmsOnPurchase: true,
+    autoSmsOnPayment: true
+  });
+
   const companyQuery = useQuery({
     queryKey: ['company-settings'],
     queryFn: settingsApi.getCompany
+  });
+
+  const smsSettingsQuery = useQuery({
+    queryKey: ['sms-settings'],
+    queryFn: smsApi.getSettings
   });
 
   useEffect(() => {
@@ -25,22 +38,42 @@ export function SettingsPage() {
     }
   }, [companyQuery.data]);
 
-  const saveMutation = useMutation({
-    mutationFn: () => settingsApi.updateCompany(company),
-    onSuccess: () => {
-      companyQuery.refetch();
+  useEffect(() => {
+    if (smsSettingsQuery.data) {
+      setSmsSettings({
+        provider: smsSettingsQuery.data.provider || 'MOCK',
+        apiKey: smsSettingsQuery.data.apiKey || '',
+        senderId: smsSettingsQuery.data.senderId || 'LOGIKHATA',
+        autoSmsOnPurchase: smsSettingsQuery.data.autoSmsOnPurchase ?? true,
+        autoSmsOnPayment: smsSettingsQuery.data.autoSmsOnPayment ?? true
+      });
     }
+  }, [smsSettingsQuery.data]);
+
+  const saveCompanyMutation = useMutation({
+    mutationFn: () => settingsApi.updateCompany(company),
+    onSuccess: () => companyQuery.refetch()
+  });
+
+  const saveSmsMutation = useMutation({
+    mutationFn: () => smsApi.updateSettings(smsSettings),
+    onSuccess: () => smsSettingsQuery.refetch()
   });
 
   const backupMutation = useMutation({
     mutationFn: () => settingsApi.backup({ notes: 'Manual UI Backup' })
   });
 
+  const handleSaveAll = () => {
+    saveCompanyMutation.mutate();
+    saveSmsMutation.mutate();
+  };
+
   return (
     <>
       <PageHeader
         title="সেটিংস"
-        description="Company, appearance, SMS এবং backup configuration"
+        description="Company, appearance, SMS Gateway এবং system configuration"
         actions={
           <div className="flex gap-2">
             <button
@@ -51,8 +84,8 @@ export function SettingsPage() {
               <Database size={17} /> ব্যাকআপ নেন
             </button>
             <button
-              onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending}
+              onClick={handleSaveAll}
+              disabled={saveCompanyMutation.isPending || saveSmsMutation.isPending}
               className="lk-btn-primary"
             >
               <Save size={17} /> সংরক্ষণ করুন
@@ -61,14 +94,14 @@ export function SettingsPage() {
         }
       />
 
-      {saveMutation.isSuccess && (
-        <div className="mb-4 rounded-xl bg-green-50 p-3 text-sm text-green-700 font-bold">
-          কোম্পানি তথ্য সফলভাবে সেভ হয়েছে।
+      {(saveCompanyMutation.isSuccess || saveSmsMutation.isSuccess) && (
+        <div className="mb-4 rounded-xl bg-green-50 p-3 text-sm font-bold text-green-700">
+          সেটিংস সফলভাবে সংরক্ষিত হয়েছে।
         </div>
       )}
 
       {backupMutation.isSuccess && (
-        <div className="mb-4 rounded-xl bg-blue-50 p-3 text-sm text-blue-700 font-bold">
+        <div className="mb-4 rounded-xl bg-blue-50 p-3 text-sm font-bold text-blue-700">
           সিস্টেম ব্যাকআপ জেনারেট করা হয়েছে (ID: {backupMutation.data?.backupId})।
         </div>
       )}
@@ -78,7 +111,10 @@ export function SettingsPage() {
           <a href="#company" className="block rounded-xl bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700">
             কোম্পানি
           </a>
-          <a href="#appearance" className="block rounded-xl px-4 py-3 text-sm font-bold text-slate-500">
+          <a href="#sms" className="block rounded-xl px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50">
+            SMS Gateway
+          </a>
+          <a href="#appearance" className="block rounded-xl px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50">
             Appearance
           </a>
         </aside>
@@ -86,7 +122,7 @@ export function SettingsPage() {
         <div className="space-y-5">
           <section id="company" className="lk-card overflow-hidden">
             <div className="border-b p-5">
-              <h3 className="font-bold">কোম্পানি তথ্য</h3>
+              <h3 className="font-bold text-slate-950">কোম্পানি তথ্য</h3>
             </div>
             <div className="grid gap-4 p-5 md:grid-cols-2">
               <Field label="কোম্পানি নাম">
@@ -122,8 +158,56 @@ export function SettingsPage() {
             </div>
           </section>
 
+          {/* SMS Gateway Configuration */}
+          <section id="sms" className="lk-card overflow-hidden">
+            <div className="flex items-center gap-3 border-b p-5">
+              <div className="grid h-9 w-9 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                <MessageSquareText size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-950">SMS Gateway Configuration</h3>
+                <p className="text-xs text-slate-500">গ্রাহককে রিয়েল মোবাইল SMS পাঠানোর জন্য গেটওয়ে কানেক্ট করুন</p>
+              </div>
+            </div>
+            <div className="grid gap-4 p-5 md:grid-cols-2">
+              <Field label="SMS Provider Gateway">
+                <select
+                  className="lk-input font-bold"
+                  value={smsSettings.provider}
+                  onChange={(e) => setSmsSettings({ ...smsSettings, provider: e.target.value })}
+                >
+                  <option value="MOCK">MOCK (Simulation / Local Test)</option>
+                  <option value="GREENWEB">Greenweb BD (api.greenweb.com.bd)</option>
+                  <option value="BULKSMSBD">BulkSMS BD (bulksmsbd.net)</option>
+                  <option value="SSLWIRELESS">SSL Wireless (sslwireless.com)</option>
+                </select>
+              </Field>
+
+              <Field label="Sender ID / Masking Name">
+                <input
+                  className="lk-input"
+                  placeholder="LOGIKHATA"
+                  value={smsSettings.senderId}
+                  onChange={(e) => setSmsSettings({ ...smsSettings, senderId: e.target.value })}
+                />
+              </Field>
+
+              <div className="md:col-span-2">
+                <Field label="API Key / Token" help="গেটওয়ে প্রোভাইডারের প্রদেয় গোপন API Key বা Token লিখুন">
+                  <input
+                    type="password"
+                    className="lk-input"
+                    placeholder="আপনার API Key লিখুন..."
+                    value={smsSettings.apiKey}
+                    onChange={(e) => setSmsSettings({ ...smsSettings, apiKey: e.target.value })}
+                  />
+                </Field>
+              </div>
+            </div>
+          </section>
+
           <section id="appearance" className="lk-card p-5">
-            <h3 className="font-bold">Appearance</h3>
+            <h3 className="font-bold text-slate-950">Appearance</h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <button
                 onClick={() => ui.setTheme('light')}

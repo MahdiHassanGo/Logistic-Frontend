@@ -1,15 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
-import { Download, Printer, WalletCards } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Download, MessageSquareText, Printer, Send, WalletCards } from 'lucide-react';
+import { useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Badge, ErrorBox, Loading } from '../components/ui';
+import { Badge, ErrorBox, Field, Loading } from '../components/ui';
 import { apiError } from '../services/api';
-import { invoicesApi, purchasesApi } from '../services/endpoints';
+import { invoicesApi, purchasesApi, smsApi } from '../services/endpoints';
 import { dateBn, money } from '../utils/format';
 
 export function InvoiceDetailsPage() {
   const { id = '' } = useParams();
   const [sp] = useSearchParams();
   const purchaseId = sp.get('purchaseId');
+  const qc = useQueryClient();
+
+  const [openSms, setOpenSms] = useState(false);
+  const [smsText, setSmsText] = useState('');
 
   const invoiceQuery = useQuery({
     queryKey: ['invoice', id],
@@ -21,6 +26,14 @@ export function InvoiceDetailsPage() {
     queryKey: ['invoice-purchase', purchaseId],
     queryFn: () => purchasesApi.get(purchaseId!),
     enabled: !invoiceQuery.data && !!purchaseId
+  });
+
+  const sendSmsMutation = useMutation({
+    mutationFn: (body: { recipientPhone: string; message: string }) => smsApi.resend(body),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['sms-history'] });
+      setOpenSms(false);
+    }
   });
 
   if (invoiceQuery.isLoading || (purchaseQuery.isLoading && !!purchaseId)) return <Loading />;
@@ -37,6 +50,18 @@ export function InvoiceDetailsPage() {
 
   const pdfUrl = invoicesApi.pdfUrl(i.id);
 
+  const handleOpenSms = () => {
+    const defaultMsg = `LogiKhata ইনভয়েস: ${i.invoiceNumber}
+গ্রাহক: ${customer.name}
+তারিখ: ${dateBn(i.invoiceDate)}
+মোট: ${money(i.grandTotal)}
+পরিশোধিত: ${money(i.paidAmount)}
+বর্তমান বকেয়া: ${money(i.currentDue)}
+ধন্যবাদ, LogiKhata!`;
+    setSmsText(defaultMsg);
+    setOpenSms(true);
+  };
+
   return (
     <>
       <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
@@ -44,7 +69,7 @@ export function InvoiceDetailsPage() {
           <h1 className="lk-page-title">ইনভয়েস {i.invoiceNumber}</h1>
           <p className="text-sm text-slate-500">{dateBn(i.invoiceDate)} · {customer.name}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={() => window.print()} className="lk-btn-secondary">
             <Printer size={17} /> প্রিন্ট
           </button>
@@ -56,6 +81,9 @@ export function InvoiceDetailsPage() {
           >
             <Download size={17} /> PDF দেখুন / ডাউনলোড
           </a>
+          <button onClick={handleOpenSms} className="lk-btn-secondary">
+            <MessageSquareText size={17} /> SMS পাঠান
+          </button>
           {Number(i.currentDue) > 0 && (
             <Link to={`/app/payments/new?customerId=${customer.id}`} className="lk-btn-primary">
               <WalletCards size={17} /> পেমেন্ট
@@ -164,6 +192,60 @@ export function InvoiceDetailsPage() {
           </div>
         </div>
       </article>
+
+      {/* Send SMS Modal */}
+      {openSms && (
+        <div className="fixed inset-0 z-[70] grid place-items-center bg-slate-950/50 p-4">
+          <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center gap-3 border-b border-slate-200 p-5">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                <MessageSquareText />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-950">গ্রাহককে SMS পাঠান</h3>
+                <p className="text-xs text-slate-500">ইনভয়েস সামারি টেক্সট নোটিফিকেশন</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 p-5">
+              <Field label="প্রাপক ফোন নাম্বার">
+                <input className="lk-input font-bold" value={customer.phone} disabled />
+              </Field>
+
+              <Field label="SMS মেসেজ টেক্সট">
+                <textarea
+                  className="lk-input min-h-36 font-mono text-sm leading-6"
+                  value={smsText}
+                  onChange={(e) => setSmsText(e.target.value)}
+                />
+              </Field>
+
+              {sendSmsMutation.error && (
+                <ErrorBox message={apiError(sendSmsMutation.error)} />
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 p-4">
+              <button type="button" onClick={() => setOpenSms(false)} className="lk-btn-secondary">
+                বাতিল
+              </button>
+              <button
+                type="button"
+                disabled={!smsText.trim() || sendSmsMutation.isPending}
+                onClick={() =>
+                  sendSmsMutation.mutate({
+                    recipientPhone: customer.phone,
+                    message: smsText
+                  })
+                }
+                className="lk-btn-primary inline-flex items-center gap-1.5"
+              >
+                <Send size={16} /> {sendSmsMutation.isPending ? 'পাঠানো হচ্ছে...' : 'SMS পাঠান'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
