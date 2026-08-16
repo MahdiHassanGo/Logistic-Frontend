@@ -1,0 +1,208 @@
+/* ═══════════════════════════════════════════
+   LOGIKHATA ERP — PURCHASE PAGE STYLES
+   ═══════════════════════════════════════════ */
+
+/* ── Purchase Table ─────────────────────────── */
+.purchase-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.purchase-table th {
+  background: var(--surface-soft);
+  text-align: left;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.purchase-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: middle;
+}
+
+.purchase-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.purchase-table tbody tr:hover {
+  background: var(--surface-soft);
+}
+
+/* ── Summary Card ───────────────────────────── */
+.purchase-summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.purchase-summary-card__header {
+  padding: 1.125rem 1.5rem;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--surface-soft);
+}
+
+.purchase-summary-card__header h4 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.purchase-summary-card__body {
+  padding: 1.25rem 1.5rem;
+}
+
+/* ── Summary Rows ───────────────────────────── */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 0;
+  font-size: 0.9375rem;
+  border-bottom: 1px solid var(--border-soft);
+  gap: 0.75rem;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row--total {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  border-top: 2px solid var(--border);
+  border-bottom: none;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  color: var(--text);
+}
+
+.summary-row--due {
+  color: var(--danger);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.summary-row--paid {
+  color: var(--success);
+}
+
+/* ── Purchase page 2-col layout ─────────────── */
+.purchase-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .purchase-page-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .purchase-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT ROW CARD — construction item entry
+   ═══════════════════════════════════════════ */
+.product-row-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: box-shadow 0.18s ease;
+}
+
+.product-row-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light, #dbeafe);
+}
+
+/* Top row: category + brand + size selects */
+.product-row-card__head {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 0;
+}
+
+.product-row-card__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light, #dbeafe);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  margin-bottom: 0.35rem;
+  flex-shrink: 0;
+}
+
+.product-row-card__remove {
+  margin-bottom: 0.35rem !important;
+  flex-shrink: 0;
+}
+
+/* Bottom row: quantity / rate / discount / total */
+.product-row-card__nums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.5rem 1.25rem 1rem;
+  border-top: 1px dashed var(--border-soft);
+  margin-top: 0.75rem;
+  background: var(--surface-soft);
+}
+
+.product-row-card__nums .form-group {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Preview strip */
+.product-row-card__preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--primary-light, #dbeafe);
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.8125rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.product-row-card__preview-label {
+  font-weight: 700;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.product-row-card__preview-text {
+  color: var(--text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
