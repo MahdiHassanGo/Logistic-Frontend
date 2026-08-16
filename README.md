@@ -1,67 +1,16 @@
-# LogiKhata Web
+# React + Vite
 
-React + TypeScript + Vite frontend for the provided LogiKhata backend and supplied HTML designs.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Stack
-- React 19 + TypeScript + Vite
-- React Router
-- TanStack Query
-- Zustand
-- Axios
-- React Hook Form + Zod
-- Tailwind CSS
-- Recharts
+Currently, two official plugins are available:
 
-## Run
-```bash
-npm install
-npm run dev
-```
-Default API:
-```env
-VITE_API_BASE_URL=https://logistic-backend-beta.vercel.app/api/v1
-```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Authentication
-The web client sends `clientType: "WEB"`, stores the access token **only in memory**, sends `credentials`/cookies, and performs a single-flight `/auth/refresh` before retrying a 401.
+## React Compiler
 
-### Important deployment requirement
-The backend ZIP currently contains:
-```env
-CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-COOKIE_SECURE=false
-```
-and the refresh cookie is configured with `SameSite=Strict`.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-For a deployed frontend, update the backend environment to include the exact frontend origin, use HTTPS, and configure cookie policy/domain for your deployment topology. A frontend deployed on a different site from the API cannot depend on a `SameSite=Strict` refresh cookie.
+## Expanding the ESLint configuration
 
-## Backend routes actually implemented
-- `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me`
-- `/dashboard/summary`
-- `/customers` + customer details/ledger
-- `/products`
-- `/purchases`
-- `/payments`
-- `/deliveries` + create driver/vehicle + delivery status
-- `/users`
-
-## Planned UI routes whose dedicated backend endpoints are not yet implemented
-- Dedicated invoice list/detail/PDF/SMS API
-- Dedicated dues/aging API
-- Reports aggregate/export API
-- SMS history/resend API
-- Settings/company/SMS/backup API
-- Driver list/update API
-- Vehicle list/update API
-
-The frontend exposes these screens but marks the gap. Invoice list/detail is derived from purchases; dues are derived from customers with `hasDue=true`; reports use bounded fetched transactions as a prototype. Replace these derivations when the corresponding backend endpoints are added.
-
-## Security notes
-- Do not put backend secrets in `VITE_*` variables.
-- Backend remains the authorization boundary.
-- Financial writes use idempotency keys.
-- Monetary inputs are sent as decimal strings.
-- Payment reversal uses the backend compensating reversal flow; records are not deleted.
-
-## Production deployment
-For Vercel/Cloudflare/Nginx, configure SPA fallback to `index.html` and update the backend CORS/cookie environment for the production frontend origin.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

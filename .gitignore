@@ -1,15 +1,15 @@
 # Dependencies
 node_modules/
 
-# Production build outputs
+# Production build
 dist/
-dist-ssr/
-build/
 
 # Environment variables
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 *.log
@@ -18,13 +18,13 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor & OS files
-.DS_Store
-Thumbs.db
+# Editor
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Vercel / Deployments
-.vercel
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite cache
+.vite/

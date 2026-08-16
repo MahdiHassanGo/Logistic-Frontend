@@ -1,0 +1,659 @@
+/* ═══════════════════════════════════════════
+   LOGIKHATA ERP — CUSTOMER PAGE STYLES
+   ═══════════════════════════════════════════ */
+
+/* ── Customer Profile Layout ────────────────── */
+.customer-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Identity Card ──────────────────────────── */
+.customer-identity-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.customer-identity-card__cover {
+  height: 80px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.customer-identity-card__body {
+  padding: 0 1.75rem 1.75rem;
+  margin-top: -40px;
+}
+
+.customer-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.customer-identity {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+}
+
+.customer-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-light), #dbeafe);
+  color: var(--primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  border: 3px solid var(--surface);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.customer-details {
+  padding-bottom: 4px;
+}
+
+.customer-details h2 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+
+.customer-id {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.customer-meta {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-top: 0.375rem;
+}
+
+.customer-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  padding-top: 48px;
+}
+
+/* ── Customer Financial Summary ─────────────── */
+.customer-fin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.customer-fin-item {
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+
+.customer-fin-item__label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-bottom: 0.375rem;
+  font-weight: 500;
+}
+
+.customer-fin-item__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Form Grid ──────────────────────────────── */
+.customer-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.customer-form-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Profile Tabs ───────────────────────────── */
+.profile-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  gap: 0;
+}
+
+.profile-tab {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--t-fast);
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.profile-tab:hover {
+  color: var(--text);
+}
+
+.profile-tab--active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 768px) {
+  .customer-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-form-full {
+    grid-column: span 1;
+  }
+
+  .customer-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .customer-actions {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .customer-fin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOMER LIST — RESPONSIVE TABLE / CARDS
+   ═══════════════════════════════════════════ */
+
+/* Hide mobile cards on desktop/tablet */
+.cust-mobile-list { display: none; }
+
+/* Hide table on mobile */
+.cust-table-wrapper { display: block; border: none; border-radius: 0; }
+
+/* ── Mobile breakpoint ──────────────────────── */
+@media (max-width: 640px) {
+  .cust-table-wrapper { display: none !important; }
+
+  .cust-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Individual customer card */
+  .cust-mobile-card {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background var(--t-fast);
+  }
+
+  .cust-mobile-card:last-child { border-bottom: none; }
+
+  .cust-mobile-card:hover,
+  .cust-mobile-card:active {
+    background: var(--surface-soft);
+  }
+
+  /* Header row: serial + name/shop + balance */
+  .cust-mobile-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cust-mobile-card__serial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .cust-mobile-card__name-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cust-mobile-card__name {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .cust-mobile-card__shop {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .cust-mobile-card__balance {
+    flex-shrink: 0;
+    padding: 0.2rem 0.625rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* Meta row: village + phone */
+  .cust-mobile-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.625rem;
+    padding-left: calc(28px + 0.75rem); /* align under name */
+  }
+
+  .cust-mobile-card__meta-label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Footer action */
+  .cust-mobile-card__footer {
+    padding-left: calc(28px + 0.75rem);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOMER PROFILE PAGE v2  — Khata ledger style
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Page wrapper */
+.cp-page {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Action bar ───────────────────────────────── */
+.cp-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cp-action-bar__right {
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+/* ── Khata Header ─────────────────────────────── */
+.cp-header {
+  text-align: center;
+}
+
+.cp-customer-name {
+  font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-family: var(--font-heading, inherit);
+}
+
+.cp-shop-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.cp-shop-line {
+  flex: 0 0 28px;
+  height: 1px;
+  background: var(--border-dark, var(--border));
+}
+
+.cp-shop-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.cp-meta-row {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* Red rule — signature khata element */
+.cp-khata-rule {
+  margin-top: 16px;
+  height: 2.5px;
+  background: var(--danger);
+  border-radius: 2px;
+  opacity: 0.65;
+}
+
+/* ── Print toolbar ────────────────────────────── */
+.cp-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cp-btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.cp-btn-print:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+/* ── Summary strip ────────────────────────────── */
+.cp-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cp-summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 15px 18px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.cp-summary-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.cp-summary-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cp-summary-value--green { color: var(--success); }
+.cp-summary-value--ink   { color: var(--text); }
+.cp-summary-value--red   { color: var(--danger); }
+
+/* ── Ledger card ──────────────────────────────── */
+.cp-ledger-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.cp-ledger-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.cp-ledger-topbar-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.cp-tx-count {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
+/* ── Table ────────────────────────────────────── */
+.cp-table-wrap { overflow-x: auto; }
+
+.cp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.cp-table thead tr {
+  background: var(--surface-soft);
+  border-bottom: 2px solid var(--border);
+}
+
+.cp-table thead th {
+  padding: 10px 18px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cp-th-r { text-align: right !important; }
+
+.cp-th-due {
+  border-left: 2.5px solid var(--border) !important;
+}
+
+.cp-table tbody tr {
+  border-bottom: 1px solid var(--border-soft, var(--border));
+  transition: background 0.1s;
+}
+
+.cp-table tbody tr:last-child { border-bottom: none; }
+
+.cp-data-row { cursor: pointer; }
+.cp-data-row:hover { background: var(--surface-soft); }
+
+.cp-table tbody td {
+  padding: 14px 18px;
+  vertical-align: top;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+/* Date column */
+.cp-td-date {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding-top: 16px !important;
+}
+
+.cp-invoice-id {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-top: 3px;
+}
+
+/* Description column */
+.cp-td-desc { line-height: 1; }
+
+.cp-desc-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1.55;
+}
+
+.cp-desc-row + .cp-desc-row { margin-top: 3px; }
+
+.cp-desc-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* Amount columns */
+.cp-td-r { text-align: right; }
+
+.cp-amt-paid {
+  font-weight: 600;
+  color: var(--success);
+  white-space: nowrap;
+}
+
+.cp-amt-cost {
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Due column — red left border, right-align */
+.cp-td-due-cell {
+  border-left: 2.5px solid #FECACA !important;
+  text-align: right;
+  padding-right: 12px !important;
+}
+
+/* Due chip */
+.cp-due-chip {
+  display: inline-block;
+  background: #FEF2F2;
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid #FECACA;
+  white-space: nowrap;
+}
+
+.cp-due-chip--paid {
+  background: #F0FDF4;
+  color: var(--success);
+  border-color: #BBF7D0;
+}
+
+.cp-due-chip--lg {
+  font-size: 0.9rem;
+  padding: 4px 12px;
+}
+
+/* Totals row */
+.cp-row-total td {
+  background: var(--surface-soft);
+  border-top: 2px solid var(--border) !important;
+  font-weight: 600;
+}
+
+.cp-total-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Footer ───────────────────────────────────── */
+.cp-footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  padding-bottom: 0.5rem;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 580px) {
+  .cp-summary {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cp-summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 12px 16px;
+  }
+
+  .cp-summary-label { margin-bottom: 0; }
+  .cp-summary-value { font-size: 1.1rem; }
+
+  .cp-action-bar { flex-direction: column; align-items: flex-start; }
+  .cp-action-bar__right { width: 100%; }
+}
+
+/* ── Print ────────────────────────────────────── */
+@media print {
+  .cp-action-bar,
+  .cp-toolbar { display: none; }
+
+  .cp-khata-rule { opacity: 1; }
+
+  .cp-due-chip,
+  .cp-due-chip--paid {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
